@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Earth and Moon Animation</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Create the scene, camera, and renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    document.body.appendChild(renderer.domElement);
+
+    // Load textures
+    const loader = new THREE.TextureLoader();
+    const earthTexture = loader.load('https://upload.wikimedia.org/wikipedia/commons/c/cf/WorldMap-A_non-Frame.png');
+
+    const moonTexture = loader.load('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/280px-FullMoon2010.jpg');
+
+    // Create Earth
+    const earthGeometry = new THREE.SphereGeometry(5, 32, 32);
+    const earthMaterial = new THREE.MeshStandardMaterial({ map: earthTexture });
+    const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+    earth.castShadow = true;
+    scene.add(earth);
+
+    // Create Moon
+    const moonGeometry = new THREE.SphereGeometry(1, 32, 32);
+    const moonMaterial = new THREE.MeshStandardMaterial({ map: moonTexture });
+    const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+    moon.castShadow = true;
+    scene.add(moon);
+
+    // Positioning
+    earth.position.set(0, 0, 0);
+    moon.position.set(10, 0, 0);
+
+    // Light source
+    const light = new THREE.PointLight(0xffffff, 1, 500);
+    light.position.set(30, 0, 0);
+    light.castShadow = true;
+    scene.add(light);
+
+    camera.position.z = 20;
+
+    // Animation function
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Earth's rotation
+      earth.rotation.y += 0.01;
+
+      // Moon's rotation and revolution around Earth
+      moon.rotation.y += 0.01;
+      moon.position.x = 10 * Math.cos(Date.now() * 0.001);
+      moon.position.z = 10 * Math.sin(Date.now() * 0.001);
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
+</body>
+
+</html>
